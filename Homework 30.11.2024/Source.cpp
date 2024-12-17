@@ -471,7 +471,7 @@ void TwoDimensionalArrayGeneration()
  ■ Знаходження максимального значення двох цілих;
  ■ Знаходження максимального значення трьох цілих
 */
-
+/*
 #include <iostream>
 #include <locale>
 
@@ -569,10 +569,184 @@ long long findMax(long long a, long long b, long long c)
 {
 	return findMax(findMax(a, b), c);
 }
+*/
+
+/*
+№4
+ Напишіть рекурсивну функцію, яка приймає одновимірний масив зі 100 цілих чисел,
+ заповнених випадковим чином, і знаходить позицію, з якої починається послідовність з 10 чисел, сума яких мінімальна.
+ Вивести масив у вигляды таблиці (10х10)
+*/
+
+#include <iostream>
+#include <ctime>
+#include <iomanip>
+#include <limits>
+#include <utility>
+#include <string>
+
+using namespace std;
+
+void autoFillArray(int length, int* arr);
+void outputArray(int startPos, int endPos, int* arr, bool forSum = false, bool withColor = false, char SEPARATION = ',', int withColorStart = -1, int withColorEnd = -1);
+pair <int, int> returningIndexOFMinSUM(int length, int range, int* arr);
+
+int main()
+{
+	system("chcp 1251>null");
+	setlocale(LC_ALL, "ukr");
+	srand(time(NULL));
+
+	const int LENGTH = 100;
+
+	int myArray[LENGTH];
+
+	cout << "\t\t\t\t\033[033m Виведення масиву 10х10 \033[0m" << endl << endl;
+
+	autoFillArray(LENGTH, myArray);
+	outputArray(0, LENGTH-1, myArray);
+	cout << endl;
 
 
+	cout << endl << "\t\t\t\t\033[033m Виведення найменшої суми \033[0m" << endl << endl;
+
+	auto result = returningIndexOFMinSUM(LENGTH, 10, myArray);
+
+	cout << "\033[033m Найменша сума: \033[0m";
+	outputArray(result.first, (result.first + 10), myArray, /* forSum = */ true, /* withColor = */ false, /* SEPARATION = */ '+',/*withColorStart*/ -1,/*withColorEnd*/ -1);
+	cout << " = ";
+	cout << "\033[035m" << result.second << "\033[0m" << endl; 
+
+	cout << "\033[033mПочатковий індекс становить: \033[0m\033[035m" << result.first << "\033[0m" << endl;
+
+	outputArray(0, LENGTH-1, myArray, /* forSum = */ false, /* withColor = */ true, /* SEPARATION = */ ',', /*withColorStart*/ result.first,/*withColorEnd*/ (result.first + 10));
+
+	return 0;
+}
+
+void autoFillArray(int length, int *arr)
+{
+	for (int i = 0; i < length; i++)
+	{
+		arr[i] = -100 + rand() % 201;
+	}
+}
+
+void outputArray(int startPos, int endPos, int* arr, bool forSum, bool withColor, char SEPARATION, int withColorStart, int withColorEnd)
+{
+	for (int i = startPos; i <= endPos; i++)
+	{
+		if (!forSum) 
+		{
+			if (withColor) 
+			{
+				string coloredValue = "\033[035m" + to_string(arr[i]) + "\033[0m";
+
+				string valueWithoutColor = to_string(arr[i]);
+				size_t valueLength = valueWithoutColor.length();
+
+				if (withColorStart == -1 && withColorEnd == -1)
+				{
+					cout << "\033[031mУВАГА! Ви не вказали параметри withColorStart та withColorEnd для функції outputArray\033[0m" << endl;
+					return;
+				}
+
+				else if (withColorStart <= i && i <= withColorEnd)
+				{
+					if (i % 10 == 0) cout << endl << endl;
+
+					if (arr[i] < 0)
+					{
+						if (i != endPos) cout << setw(5+ (coloredValue.length() - valueLength)) << coloredValue;
+						else cout << setw(5 + (coloredValue.length() - valueLength)) << coloredValue;
+					}
+					else
+					{
+						if (i != endPos) cout << setw(5 + (coloredValue.length() - valueLength)) << coloredValue;
+						else cout << setw(5 + (coloredValue.length() - valueLength)) << coloredValue;
+					}
+				}
+				else if (withColorStart > i || i > withColorEnd )
+				{
+					if (i % 10 == 0) cout << endl << endl;
+
+					if (arr[i] < 0)
+					{
+						if (i != endPos) cout << setw(5) << arr[i];
+						else cout << setw(5) << arr[i];
+					}
+					else
+					{
+						if (i != endPos) cout << setw(5) << arr[i];
+						else cout << setw(5) << arr[i];
+					}
+				}
+				
+
+			}
+			else
+			{
+				if (i % 10 == 0) cout << endl << endl;
+
+				if (arr[i] < 0)
+				{
+					if (i != endPos) cout << setw(5) << arr[i];
+					else cout << setw(5) << arr[i];
+				}
+				else
+				{
+					if (i != endPos) cout << setw(5) << arr[i];
+					else cout << setw(5) << arr[i];
+				}
+			}
+		}
+
+		else
+		{
+			if (arr[i] < 0)
+			{
+				if (i != endPos) cout  << "(" << arr[i] << ")" << " " << SEPARATION << " ";
+				else cout << setw(5) << arr[i];
+			}
+			else
+			{
+				if (i != endPos) cout << arr[i] << " " << SEPARATION << " ";
+				else cout << arr[i];
+			}
+		}
+
+	
+	}
+}
 
 
+pair <int, int> returningIndexOFMinSUM(int length, int range ,int* arr) 
+{
+	long long minSum = numeric_limits<long long>::max();
+
+	int index = -1;
+	if (length < range)
+	{
+		cout << "Помилка: range не може бути більше за length!" << endl;
+		return { -1, -1 };
+	}
+
+	for (int i = 0; i < (length - range); i++)
+	{
+		int Sum = 0;
+		for (int j = i; j < i + 10; j++) {
+			Sum += arr[j];
+		}
+
+		if (Sum < minSum) 
+		{
+			minSum = Sum;
+			index = i;
+		}
+	}
+
+	return { index, minSum };
+}
 
 
 
