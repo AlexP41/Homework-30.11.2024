@@ -2,17 +2,6 @@
 ВБУДУВАННЯ. ПЕРЕВАНТАЖЕННЯ. ШАБЛОНИ ФУНКЦІЙ. РЕКУРСІЯ.
 ======================================================
 
-№2
- Написати шаблонні функції і протестувати їх в основній програмі:
- ■ Знаходження максимального значення в одновимірному масиві;
- ■ Знаходження максимального значення у двовимірному масиві;
-
-№3
- Реалізуйте перевантажені функції для
- ■ Знаходження максимального значення двох цілих;
- ■ Знаходження максимального значення трьох цілих
-
-
 №4
  Напишіть рекурсивну функцію, яка приймає одновимірний масив зі 100 цілих чисел,
  заповнених випадковим чином, і знаходить позицію, з якої починається послідовність з 10 чисел, сума яких мінімальна.
@@ -50,7 +39,7 @@
   Виклик №1: Функція виконана успішно.
   Виклик №2: Функція виконана успішно.
 */
-
+/*
 #include <iostream>
 #include <locale>
 
@@ -143,3 +132,368 @@ int main() {
 	return 0;
 
 }
+*/
+
+/*
+№2
+ Написати шаблонні функції і протестувати їх в основній програмі:
+ ■ Знаходження максимального значення в одновимірному масиві;
+ ■ Знаходження максимального значення у двовимірному масиві;
+*/
+
+/*
+#include <iostream>
+#include <ctime>
+#include <locale>
+#include <limits>
+#include <iomanip>
+#include <random>
+#include <utility> // Для std::pair
+#include <tuple> // for tuple
+
+
+
+#define OUTPUT_FOR_ONE_DIMENSION_ARRAY(X) \
+    std::cout << "\n\033[032mНайбільше значення масиву становить: " << (X).first<< "\n" \
+              << "Його позиція: " << (X).second << "\033[0m" << std::endl;
+
+#define  OUTPUT_FOR_TWO_DIMENSION_ARRAY(X) \
+	std::cout << "\n\033[032mНайбільше значення масиву становить: " << std::get<0>(X) << "\n" \
+			  << "Його позиція: \033[035mгоризонталь: " << std::get<1>(X) << "  \033[035mвертикаль: " <<std::get<2>(X) << "\033[0m" << std::endl;
+
+
+using namespace std;
+
+char generateRandomCharFromSet() {
+	const string charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	static random_device rd;
+	static mt19937 generator(rd());
+	uniform_int_distribution<int> distribution(0, charset.size() - 1);
+
+	return charset[distribution(generator)];
+}
+
+template  <typename T>
+pair <T, int> maxInOneDimensionalArray(T* arr, int length);
+
+template <typename T1>
+tuple <T1, int, int> maxInTwoDimensionalArray(T1** arr, int rows, int columns);
+
+template <typename TYPE>
+void fillOneDimensionalAndOutput(int length, TYPE* arr, int SWITCH = 0);
+
+template <typename TYPE>
+void fillTwoDimensionalAndOutput(TYPE** arr, int rows, int columns, int SWITCH = 0);
+
+
+// --------------------------------------------  MAIN function --------------------------------------------------------- //
+
+int main() 
+{
+	void OneDimensionalArrayGeneration();
+	void TwoDimensionalArrayGeneration();
+
+	setlocale(LC_ALL, "ukr");
+	system("chcp 1251>null");
+	srand(time(NULL));
+
+	// 
+	OneDimensionalArrayGeneration();
+
+	//
+	
+	TwoDimensionalArrayGeneration();
+
+	return 0;
+}
+
+// ------------------------------------------------------------------------------------------------------------------------- //
+template  <typename T> 
+pair <T, int> maxInOneDimensionalArray(T* arr, int length)
+{
+	T max = numeric_limits<T>::min();
+
+	int maxPosition = 0;
+
+	for (int i = 0; i <= length; i++)
+	{
+		if (arr[i] > max)
+		{
+			max = arr[i];
+			maxPosition = i;
+		}
+	}
+
+	return { max, maxPosition };
+}
+
+template <typename T1>
+tuple <T1, int, int> maxInTwoDimensionalArray(T1** arr, int rows, int columns) 
+{
+	T1 max = numeric_limits<T1>::min();
+
+	int maxPositionI = 0;
+	int maxPositionJ = 0;
+
+	for (int i = 0; i < rows; i++) 
+	{
+		for (int j = 0; j < columns; j++) 
+		{
+			if (arr[i][j] > max) 
+			{
+				max = arr[i][j];
+				maxPositionI = i;
+				maxPositionJ = j;
+			}
+		}	
+	}
+
+	return { max, maxPositionI, maxPositionJ};
+}
+
+template <typename TYPE>
+void fillOneDimensionalAndOutput(int length, TYPE* arr, int SWITCH)
+{
+	cout << "\033[033mМасив: \033[0m" << endl;
+
+	switch (SWITCH)
+	{
+	case 1:
+		for (int i = 0; i < length; i++)
+		{
+			arr[i] = generateRandomCharFromSet();
+
+			cout << setw(4) << arr[i];
+		}
+		cout << endl;
+		break;
+	case 2:
+		for (int i = 0; i < length; i++)
+		{
+			arr[i] = -100 + rand() % 201;
+
+			cout << setw(4) << arr[i];
+		}
+		cout << endl;
+		break;
+
+	default:
+	break;
+	}
+	
+}
+
+template <typename TYPE>
+void fillTwoDimensionalAndOutput(TYPE** arr, int rows, int columns, int SWITCH) 
+{
+	cout << "\033[033mРандомно-сгенерований двовимірний масив: \033[0m" << endl;
+
+	switch (SWITCH) 
+	{
+	
+		case 1:
+		{
+
+			for (int i = 0; i < rows; i++)
+			{
+			
+				for (int j = 0; j < columns; j++)
+				{
+					arr[i][j] = generateRandomCharFromSet();
+					cout << setw(5) << arr[i][j];
+				}
+				cout << endl;
+			}
+			cout << endl;
+			break;
+
+		}
+		case 2:
+		{
+			for (int i = 0; i < rows; i++)
+			{
+				for (int j = 0; j < columns; j++)
+				{
+					arr[i][j] = -100 + rand() % 201;
+					cout << setw(5) << arr[i][j];
+				}
+				cout << endl;
+			}
+			cout << endl;
+			break;
+
+
+		}
+
+	}
+
+}
+
+void OneDimensionalArrayGeneration() 
+{
+	const int LENGTH_1 = 5 + rand() % 16;
+
+	int userChoice_1;
+	while (true) {
+		cout << "\033[033m\t\t\t\tГенерація одновимірного масиву" << endl;
+		cout << "1 - сгенерувати для типу char;\n"
+			"2 - сгенерувати для типу int;\n\033[0m"
+			"Ваш вибір: ";
+		cin >> userChoice_1;
+
+		if (cin.fail()) {
+			cout << "\033[031m Помилка! Будь ласка, введіть число.\033[0m\n" << endl;
+			cin.clear();
+			cin.ignore(1000, '\n');
+			continue;
+		}
+		if (userChoice_1 != 1 && userChoice_1 != 2) {
+			cout << "\033[031m Помилка! Будь ласка, введіть число 1 або 2.\033[0m\n" << endl;
+			continue;
+		}
+
+		break;
+
+	}
+
+	switch (userChoice_1)
+	{
+		case 1: {
+			char* OneDimensionalArray = new char[LENGTH_1];
+
+			fillOneDimensionalAndOutput(LENGTH_1, OneDimensionalArray, 1);
+
+			auto result = maxInOneDimensionalArray(OneDimensionalArray, LENGTH_1);
+
+			OUTPUT_FOR_ONE_DIMENSION_ARRAY(result);
+
+			delete[] OneDimensionalArray;
+			break;
+		}
+
+		case 2: {
+			int* OneDimensionalArray2 = new int[LENGTH_1];
+
+			fillOneDimensionalAndOutput(LENGTH_1, OneDimensionalArray2, 2);
+
+			auto result = maxInOneDimensionalArray(OneDimensionalArray2, LENGTH_1);
+
+			OUTPUT_FOR_ONE_DIMENSION_ARRAY(result);
+
+			delete[] OneDimensionalArray2;
+			break;
+		}
+	}
+}
+
+void TwoDimensionalArrayGeneration() 
+{
+	const int ROWS = 5 + rand() % 16;
+	const int COLUMNS = 5 + rand() % 16;
+
+	int userChoice_2;
+	while (true) {
+		cout << "\033[033m\t\t\t\tГенерація двовимірного масиву" << endl;
+		cout << "1 - сгенерувати для типу char;\n"
+			"2 - сгенерувати для типу int;\n\033[0m"
+			"Ваш вибір: ";
+		cin >> userChoice_2;
+
+		if (cin.fail()) {
+			cout << "\033[031m Помилка! Будь ласка, введіть число.\033[0m\n" << endl;
+			cin.clear();
+			cin.ignore(1000, '\n');
+			continue;
+		}
+		if (userChoice_2 != 1 && userChoice_2 != 2) {
+			cout << "\033[031m Помилка! Будь ласка, введіть число 1 або 2.\033[0m\n" << endl;
+			continue;
+		}
+
+		break;
+
+	}
+
+	switch (userChoice_2)
+	{
+		case 1: {
+
+
+			char** TwoDimensionalArray = new char* [ROWS];
+			for (int i = 0; i < ROWS; i++) {
+				TwoDimensionalArray[i] = new char[COLUMNS];
+			}
+
+
+			fillTwoDimensionalAndOutput(TwoDimensionalArray, ROWS, COLUMNS, 1);
+
+			auto result = maxInTwoDimensionalArray(TwoDimensionalArray, ROWS, COLUMNS);
+
+			OUTPUT_FOR_TWO_DIMENSION_ARRAY(result);
+
+			for (int i = 0; i < ROWS; i++) {
+				delete[] TwoDimensionalArray[i];
+			}
+			delete[] TwoDimensionalArray;
+
+			break;
+		}
+
+		case 2: {
+			int** TwoDimensionalArray2 = new int* [ROWS];
+			for (int i = 0; i < ROWS; i++)  
+			{
+				TwoDimensionalArray2[i] = new int[COLUMNS];
+			}
+
+
+
+			fillTwoDimensionalAndOutput(TwoDimensionalArray2, ROWS, COLUMNS, 2);
+
+			auto result = maxInTwoDimensionalArray(TwoDimensionalArray2, ROWS, COLUMNS);
+
+			OUTPUT_FOR_TWO_DIMENSION_ARRAY(result);
+
+			for (int i = 0; i < ROWS; i++) {
+				delete[] TwoDimensionalArray2[i];
+			}
+			delete[] TwoDimensionalArray2;
+			break;
+		}
+
+	}
+}
+*/
+
+/*
+№3
+ Реалізуйте перевантажені функції для
+ ■ Знаходження максимального значення двох цілих;
+ ■ Знаходження максимального значення трьох цілих
+*/
+
+#include <iostream>
+
+
+using namespace std;
+
+
+int main() {
+	system("chcp 1251>null");
+
+
+	cout << "\033[033mВведення чисел: \033[0m" << endl;
+
+	
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+
