@@ -473,23 +473,102 @@ void TwoDimensionalArrayGeneration()
 */
 
 #include <iostream>
-
+#include <locale>
 
 using namespace std;
 
-
 int main() {
+	int findMax(int a, int b);
+	int findMax(int a, int b, int c);
+
+	short findMax(short a, short b);
+	short findMax(short a, short b, short c);
+
+	long findMax(long a, long b);
+	long findMax(long a, long b, long c);
+
+	long long findMax(long long a, long long b);
+	long long findMax(long long a, long long b, long long c);
+
 	system("chcp 1251>null");
+	setlocale(LC_ALL, "ukr");
 
 
-	cout << "\033[033mВведення чисел: \033[0m" << endl;
+	short shortArray[] = { 2, 8, -3};
 
-	
+	int intArray[] = { 3, 7, -1};
+
+	long longArray[] = {-4L, 30L, 25L };
+
+	long long longLongArray[] = { 100LL, 999999999LL, -500LL};
+
+
+	cout << "\033[032m=== Тестування для типу short ===\033[0m" << endl;
+	cout << "Максимальне значення серед short: ";
+	short shortResult = findMax(shortArray[0], shortArray[1], shortArray[2]);
+	cout << shortResult << endl;
+
+	cout << "\n\033[032m=== Тестування для типу int ===\033[0m" << endl;
+	cout << "Максимальне значення серед int: ";
+	int intResult = findMax(intArray[0], intArray[2], intArray[2]);
+	cout << intResult << endl;
+
+	cout << "\n\033[032m=== Тестування для типу long ===\033[0m" << endl;
+	cout << "Максимальне значення серед long: ";
+	long longResult = findMax(longArray[1], longArray[2], longArray[2]);
+	cout << longResult << endl;
+
+	cout << "\n\033[032m=== Тестування для типу long long ===\033[0m" << endl;
+	cout << "Максимальне значення серед long long: ";
+	long long longLongResult = findMax(longLongArray[0], longLongArray[1], longLongArray[2]);
+	cout << longLongResult << endl;
 
 	return 0;
 }
 
+// Для int
+int findMax(int a, int b) 
+{
+	return (a > b) ? a : b;
+}
 
+int findMax(int a, int b, int c)
+{
+	return findMax(findMax(a, b), c);
+}
+
+// Для short
+short findMax(short a, short b)
+{
+	return (a > b) ? a : b;
+}
+
+short findMax(short a, short b, short c)
+{
+	return findMax(findMax(a, b), c);
+}
+
+// Для long
+long findMax(long a, long b)
+{
+	return (a > b) ? a : b;
+}
+
+long findMax(long a, long b, long c)
+{
+	return findMax(findMax(a, b), c);
+}
+
+// Для long long
+long long findMax(long long a, long long b)
+{
+	return (a > b) ? a : b;
+}
+
+long long findMax(long long a, long long b, long long c)
+{
+	return findMax(findMax(a, b), c);
+}
 
 
 
